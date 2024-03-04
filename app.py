@@ -87,8 +87,7 @@ def handle_message(event):
         else:
             # 對後續的呼叫，回復空白訊息
             line_bot_api.reply_message(
-                event.reply_token,
-                TextSendMessage(text='')
+                event.reply_token
             )
         # 啟動一個新的線程來處理請求
         threading.Thread(target=process_request, args=(event.message.text, user_id)).start()
