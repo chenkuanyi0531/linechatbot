@@ -63,21 +63,13 @@ def handle_message(event):
     client_ip = request.remote_addr
     msg = event.message.text
     user_id = event.source.user_id  # LINE 使用者的 ID
-
-    # 假設您有一個函數來檢查 IP 地址是否有權限接收訊息
-    if check_ip_permission(client_ip, user_id):
-        try:
-            GPT_answer = GPT_response(msg)
-            line_bot_api.reply_message(event.reply_token, TextSendMessage(GPT_answer))
-        except:
-            line_bot_api.reply_message(event.reply_token, TextSendMessage('處理訊息時發生錯誤'))
+    if request.remote_addr==client_ip:
+        GPT_answer = GPT_response(msg)
+        line_bot_api.reply_message(event.reply_token, TextSendMessage(GPT_answer))
+    else:
+        line_bot_api.reply_message(event.reply_token, TextSendMessage('處理訊息時發生錯誤'))
 
 
-def check_ip_permission(ip_address, user_id):
-    # 檢查 IP 地址是否有權限接收訊息
-    # 這裡可以添加您的邏輯，例如檢查資料庫中的記錄
-    # 返回 True 如果 IP 地址有權限，否則返回 False
-    pass
         
 
 @handler.add(PostbackEvent)
