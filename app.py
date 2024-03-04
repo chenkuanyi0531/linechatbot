@@ -33,7 +33,7 @@ def GPT_response(text):
          {"role": "system", "content": "你是一位GPT智能小幫手，盡量回覆所有問題，越詳細越好同時不要重複，並使用繁體中文"},
          {"role": "user", "content": text},
     ]
-    response = openai.ChatCompletion.create(engine="gpt-4-turbo", messages=messages_text, temperature=0.7, max_tokens=800,top_p=0.95)
+    response = openai.ChatCompletion.create(engine="gpt-4-0125", messages=messages_text, temperature=0.7, max_tokens=800,top_p=0.95)
     print(response)
     # 重組回應
     answer =response['choices'][0]['message']['content']
