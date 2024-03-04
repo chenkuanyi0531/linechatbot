@@ -62,14 +62,22 @@ def handle_message(event):
     # 獲取客戶端 IP 地址
     client_ip = request.remote_addr
     msg = event.message.text
-    try:
-        # 假設 GPT_response 是一個函數，根據不同的 IP 地址來產生不同的回應
-        GPT_answer = GPT_response(msg, client_ip)
-        print(GPT_answer)
-        line_bot_api.reply_message(event.reply_token, TextSendMessage(GPT_answer))
-    except:
-        print(traceback.format_exc())
-        line_bot_api.reply_message(event.reply_token, TextSendMessage('處理訊息時發生錯誤'))
+    user_id = event.source.user_id  # LINE 使用者的 ID
+
+    # 假設您有一個函數來檢查 IP 地址是否有權限接收訊息
+    if check_ip_permission(client_ip, user_id):
+        try:
+            GPT_answer = GPT_response(msg)
+            line_bot_api.reply_message(event.reply_token, TextSendMessage(GPT_answer))
+        except:
+            line_bot_api.reply_message(event.reply_token, TextSendMessage('處理訊息時發生錯誤'))
+
+
+def check_ip_permission(ip_address, user_id):
+    # 檢查 IP 地址是否有權限接收訊息
+    # 這裡可以添加您的邏輯，例如檢查資料庫中的記錄
+    # 返回 True 如果 IP 地址有權限，否則返回 False
+    pass
         
 
 @handler.add(PostbackEvent)
@@ -86,8 +94,7 @@ def welcome(event):
     message = TextSendMessage(text=f'{name}歡迎加入')
     line_bot_api.reply_message(event.reply_token, message)
         
-        
-import os
+
 if __name__ == "__main__":
     port = int(os.environ.get('PORT', 5000))
     app.run(host='0.0.0.0', port=port)
