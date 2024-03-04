@@ -59,14 +59,17 @@ def callback():
 # 處理訊息
 @handler.add(MessageEvent, message=TextMessage)
 def handle_message(event):
+    # 獲取客戶端 IP 地址
+    client_ip = request.remote_addr
     msg = event.message.text
     try:
-        GPT_answer = GPT_response(msg)
+        # 假設 GPT_response 是一個函數，根據不同的 IP 地址來產生不同的回應
+        GPT_answer = GPT_response(msg, client_ip)
         print(GPT_answer)
         line_bot_api.reply_message(event.reply_token, TextSendMessage(GPT_answer))
     except:
         print(traceback.format_exc())
-        line_bot_api.reply_message(event.reply_token, TextSendMessage('你所使用的OPENAI API key額度可能已經超過，請於後台Log內確認錯誤訊息'))
+        line_bot_api.reply_message(event.reply_token, TextSendMessage('處理訊息時發生錯誤'))
         
 
 @handler.add(PostbackEvent)
