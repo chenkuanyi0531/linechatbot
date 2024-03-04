@@ -35,17 +35,8 @@ def GPT_response(text):
          {"role": "system", "content": "你是一位GPT智能小幫手，使用繁體中文"},
          {"role": "user", "content": text},
     ]
-    response = openai.ChatCompletion.create(engine="gpt-4-turbo1", messages=messages_text, temperature=0.9, max_tokens=1000,top_p=0.95,   stream=True)
-    # 重組回應
-    for resp in response:
-    # 檢查每個回應中是否有'choices'列表
-        if 'choices' in resp:
-            # 遍歷'choices'列表
-            for choice in resp['choices']:
-                # 檢查'choice'中是否有'delta'和'content'鍵
-                if 'delta' in choice and 'content' in choice['delta']:
-                    answer =choice['delta']['content']
-    return answer
+    response = openai.ChatCompletion.create(engine="gpt-4-turbo1", messages=messages_text, temperature=0.9, max_tokens=1000,top_p=0.95)
+    return response['choices'][0]['message']['content']
 
 
 # 監聽所有來自 /callback 的 Post Request
