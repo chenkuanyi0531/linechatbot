@@ -30,7 +30,7 @@ openai.api_version = '2024-02-15-preview'
 def GPT_response(text):
     # 接收回應
     messages_text=[
-         {"role": "system", "content": "You are a helpful assistant."},
+         {"role": "system", "content": "你是一位GPT智能小幫手，盡量回覆所有問題，越詳細越好同時不要重複，並使用繁體中文"},
          {"role": "user", "content": text},
     ]
     response = openai.ChatCompletion.create(engine="gpt-4-turbo", messages=messages_text, temperature=0.7, max_tokens=800,top_p=0.95)
