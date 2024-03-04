@@ -17,6 +17,34 @@ import traceback
 #======python的函數庫==========
 
 app = Flask(__name__)
+
+# 定義一個裝飾器來強制 Flask 路由的超時
+def timeout(seconds=10, error_message="Timeout"):
+    def decorator(func):
+        def _handle_timeout():
+            time.sleep(seconds)
+            abort(504, error_message)
+
+        def wrapper(*args, **kwargs):
+            timer = Thread(target=_handle_timeout)
+            timer.daemon = True
+            timer.start()
+            try:
+                result = func(*args, **kwargs)
+            finally:
+                timer.join()
+            return result
+        return wraps(func)(wrapper)
+    return decorator
+
+# 將超時裝飾器應用於路由
+@app.route('/callback', methods=['POST'])
+@timeout(seconds=600)  # 為這個路由設置超時為600 秒
+def callback():
+    # 您現有的回調路由代碼
+    pass
+
+
 static_tmp_path = os.path.join(os.path.dirname(__file__), 'static', 'tmp')
 # Channel Access Token
 line_bot_api = LineBotApi(os.getenv('CHANNEL_ACCESS_TOKEN'))
