@@ -33,7 +33,7 @@ def GPT_response(text):
     # 接收回應
     print("處理中請稍後")
     messages_text=[
-         {"role": "system", "content": "你是一位智能小幫手，幫助人們查找資料，所有回復請說繁體中文"},
+         {"role": "system", "content": "你是一位智能小幫手，幫助人們查找資料，所有回復請說繁體中文，數學公式請直接寫純數字"},
          {"role": "user", "content": text},
     ]
     response = openai.ChatCompletion.create(engine="gpt-4-turbo1", messages=messages_text, temperature=0.9, max_tokens=1000,top_p=0.95)
@@ -56,38 +56,56 @@ def callback():
     return 'OK'
 
 
-# 處理訊息
+# 定義一個全局字典來追蹤每個用戶的呼叫次數
+user_calls = {}
+
+# 修改 handle_message 函數
 @handler.add(MessageEvent, message=TextMessage)
 def handle_message(event):
+    # 獲取用戶 ID
+    user_id = event.source.user_id
     # 獲取客戶端 IP 地址
     client_ip = request.remote_addr
-    msg = event.message.text
-    user_id = event.source.user_id  # LINE 使用者的 ID
-    if request.remote_addr == client_ip:
-        # 先回傳 '請稍等' 訊息
-        line_bot_api.reply_message(
-            event.reply_token,
-            TextSendMessage(text='請稍等，我們正在處理您的訊息...')
-        )
-        # 啟動一個新的線程來處理後端計算
-        threading.Thread(target=process_request, args=(msg, user_id)).start()
+
+    # 檢查用戶 ID 是否已在字典中
+    if user_id in user_calls:
+        # 為這個用戶增加呼叫次數
+        user_calls[user_id] += 1
     else:
+        # 如果沒有，初始化計數為 1
+        user_calls[user_id] = 1
+
+    # 檢查請求是否來自相同的客戶端 IP
+    if request.remote_addr == client_ip:
+        # 檢查這是否是該用戶的第一次或第二次呼叫
+        if user_calls[user_id] <= 2:
+            # 回復 '請稍等，我們正在處理您的訊息...'
+            line_bot_api.reply_message(
+                event.reply_token,
+                TextSendMessage(text='請稍等，我們正在處理您的訊息...')
+            )
+        else:
+            # 對後續的呼叫，回復空白訊息
+            line_bot_api.reply_message(
+                event.reply_token,
+                TextSendMessage(text='')
+            )
+        # 啟動一個新的線程來處理請求
+        threading.Thread(target=process_request, args=(event.message.text, user_id)).start()
+    else:
+        # 如果客戶端 IP 不匹配，發送錯誤訊息
         line_bot_api.reply_message(
             event.reply_token,
             TextSendMessage(text='處理訊息時發生錯誤')
         )
+        )
 
 def process_request(msg, user_id):
     # 模擬伺服器處理時間
-    time.sleep(5)  # 伺服器休息5秒，模擬計算過程
     # 計算完成後，發送回答
     GPT_answer = GPT_response(msg)
     # 使用 LINE Messaging API 的 push_message 方法發送訊息給用戶
     line_bot_api.push_message(user_id, TextSendMessage(text=GPT_answer))
-
-
-
-
         
 
 @handler.add(PostbackEvent)
