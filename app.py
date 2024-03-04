@@ -22,16 +22,18 @@ static_tmp_path = os.path.join(os.path.dirname(__file__), 'static', 'tmp')
 line_bot_api = LineBotApi(os.getenv('CHANNEL_ACCESS_TOKEN'))
 # Channel Secret
 handler = WebhookHandler(os.getenv('CHANNEL_SECRET'))
-# OPENAI API Key初始化設定
-openai.api_key = os.getenv('OPENAI_API_KEY')
-
+# OPENAI 初始化設定
+openai.api_key = os.getenv("AZURE_OPENAI_API_KEY")
+openai.api_base = os.getenv("AZURE_OPENAI_ENDPOINT")
+openai.api_type = 'azure'
+openai.api_version = '2023-05-15'
 
 def GPT_response(text):
     # 接收回應
-    response = openai.Completion.create(model="gpt-3.5-turbo-instruct", prompt=text, temperature=0.5, max_tokens=500)
+    response = openai.Completion.create(model="gpt-4-turbo", prompt=text, temperature=0.5, max_tokens=500,  max_tokens=800,top_p=0.95)
     print(response)
     # 重組回應
-    answer = response['choices'][0]['text'].replace('。','')
+    answer = response['choices'][0]['text'].replace('\n', '').replace(' .', '.').strip()
     return answer
 
 
