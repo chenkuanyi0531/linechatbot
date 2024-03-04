@@ -62,18 +62,27 @@ def handle_message(event):
     client_ip = request.remote_addr
     msg = event.message.text
     user_id = event.source.user_id  # LINE 使用者的 ID
+    if request.remote_addr == client_ip:
+        # 先回傳 '請稍等' 訊息
+        line_bot_api.reply_message(
+            event.reply_token,
+            TextSendMessage(text='請稍等，我們正在處理您的訊息...')
+        )
+        # 啟動一個新的線程來處理後端計算
+        threading.Thread(target=process_request, args=(msg, user_id)).start()
+    else:
+        line_bot_api.reply_message(
+            event.reply_token,
+            TextSendMessage(text='處理訊息時發生錯誤')
+        )
 
-    # 立即回覆 '請稍等' 訊息
-    line_bot_api.reply_message(event.reply_token, TextSendMessage('請稍等，我們正在處理您的訊息。'))
-
-    # 模擬後端處理延遲
-    time.sleep(1)  # 實際使用時應該移除或調整此行
-
-    if request.remote_addr==client_ip:
-        GPT_answer = GPT_response(msg)
-
-    # 從後端發送回覆給使用者
-    line_bot_api.push_message(user_id, TextSendMessage(GPT_answer))
+def process_request(msg, user_id):
+    # 模擬伺服器處理時間
+    time.sleep(5)  # 伺服器休息5秒，模擬計算過程
+    # 計算完成後，發送回答
+    GPT_answer = GPT_response(msg)
+    # 使用 LINE Messaging API 的 push_message 方法發送訊息給用戶
+    line_bot_api.push_message(user_id, TextSendMessage(text=GPT_answer))
 
 
 
