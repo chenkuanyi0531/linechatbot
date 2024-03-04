@@ -33,7 +33,7 @@ def GPT_response(text):
          {"role": "system", "content": "You are a helpful assistant."},
          {"role": "user", "content": text},
     ]
-    response = openai.Completion.create(engine="gpt-4-turbo", messages=messages_text, temperature=0.7, max_tokens=800,top_p=0.95)
+    response = openai.ChatCompletion.create(engine="gpt-4-turbo", messages=messages_text, temperature=0.7, max_tokens=800,top_p=0.95)
     print(response)
     # 重組回應
     answer =response['choices'][0]['message']['content']
