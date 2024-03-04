@@ -36,7 +36,6 @@ def GPT_response(text):
          {"role": "user", "content": text},
     ]
     response = openai.ChatCompletion.create(engine="gpt-4-turbo1", messages=messages_text, temperature=0.9, max_tokens=300,top_p=0.95)
-    print(response)
     # 重組回應
     answer =response['choices'][0]['message']['content']
     return answer
