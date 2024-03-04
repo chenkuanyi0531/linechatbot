@@ -29,10 +29,14 @@ openai.api_type = 'azure'
 openai.api_version = '2024-02-15-preview'
 def GPT_response(text):
     # 接收回應
-    response = openai.Completion.create(engine="gpt-4-turbo", prompt=text, temperature=0.7, max_tokens=800,top_p=0.95)
+    messages_text=[
+         {"role": "system", "content": "You are a helpful assistant."},
+         {"role": "user", "content": text},
+    ]
+    response = openai.Completion.create(engine="gpt-4-turbo", messages=messages_text, temperature=0.7, max_tokens=800,top_p=0.95)
     print(response)
     # 重組回應
-    answer = response['choices'][0]['text'].replace('\n', '').replace(' .', '.').strip()
+    answer =response['choices'][0]['message']['content']
     return answer
 
 
