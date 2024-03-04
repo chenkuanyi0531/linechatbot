@@ -56,43 +56,22 @@ def callback():
     return 'OK'
 
 
-# 定義一個全局字典來追蹤每個用戶的呼叫次數
-user_calls = {}
-
-# 修改 handle_message 函數
+# 處理訊息
 @handler.add(MessageEvent, message=TextMessage)
 def handle_message(event):
-    # 獲取用戶 ID
-    user_id = event.source.user_id
     # 獲取客戶端 IP 地址
     client_ip = request.remote_addr
-
-    # 檢查用戶 ID 是否已在字典中
-    if user_id in user_calls:
-        # 為這個用戶增加呼叫次數
-        user_calls[user_id] += 1
-    else:
-        # 如果沒有，初始化計數為 1
-        user_calls[user_id] = 1
-
-    # 檢查請求是否來自相同的客戶端 IP
+    msg = event.message.text
+    user_id = event.source.user_id  # LINE 使用者的 ID
     if request.remote_addr == client_ip:
-        # 檢查這是否是該用戶的第一次或第二次呼叫
-        if user_calls[user_id] <= 2:
-            # 回復 '請稍等，我們正在處理您的訊息...'
-            line_bot_api.reply_message(
-                event.reply_token,
-                TextSendMessage(text='請稍等，我們正在處理您的訊息...')
-            )
-        else:
-            # 對後續的呼叫，回復空白訊息
-            line_bot_api.reply_message(
-                event.reply_token
-            )
-        # 啟動一個新的線程來處理請求
-        threading.Thread(target=process_request, args=(event.message.text, user_id)).start()
+        # 先回傳 '請稍等' 訊息
+        line_bot_api.reply_message(
+            event.reply_token,
+            TextSendMessage(text='請稍等，我們正在處理您的訊息...')
+        )
+        # 啟動一個新的線程來處理後端計算
+        threading.Thread(target=process_request, args=(msg, user_id)).start()
     else:
-        # 如果客戶端 IP 不匹配，發送錯誤訊息
         line_bot_api.reply_message(
             event.reply_token,
             TextSendMessage(text='處理訊息時發生錯誤')
