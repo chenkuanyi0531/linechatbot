@@ -98,7 +98,6 @@ def handle_message(event):
             event.reply_token,
             TextSendMessage(text='處理訊息時發生錯誤')
         )
-        )
 
 def process_request(msg, user_id):
     # 模擬伺服器處理時間
