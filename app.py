@@ -26,7 +26,6 @@ handler = WebhookHandler(os.getenv('CHANNEL_SECRET'))
 openai.api_key = os.getenv("AZURE_OPENAI_API_KEY")
 openai.api_base = os.getenv("AZURE_OPENAI_ENDPOINT")
 openai.api_type = 'azure'
-openai.api_version = '2023-05-15'
 
 def GPT_response(text):
     # 接收回應
