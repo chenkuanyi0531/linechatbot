@@ -35,7 +35,7 @@ def GPT_response(text):
          {"role": "system", "content": "你是一位GPT智能小幫手，使用繁體中文"},
          {"role": "user", "content": text},
     ]
-    response = openai.ChatCompletion.create(engine="gpt-4-turbo1", messages=messages_text, temperature=0.9, max_tokens=1000,top_p=0.95,   stream=None)
+    response = openai.ChatCompletion.create(engine="gpt-4-turbo1", messages=messages_text, temperature=0.9, max_tokens=1000,top_p=0.95,   stream=True)
     # 重組回應
     for resp in response:
     # 檢查每個回應中是否有'choices'列表
