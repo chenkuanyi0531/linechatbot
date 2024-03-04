@@ -32,7 +32,7 @@ def GPT_response(text):
     # 接收回應
     print("處理中請稍後")
     messages_text=[
-         {"role": "system", "content": "你是一位GPT智能小幫手，使用繁體中文"},
+         {"role": "system", "content": "你是一位智能小幫手，幫助人們查找資料"},
          {"role": "user", "content": text},
     ]
     response = openai.ChatCompletion.create(engine="gpt-4-turbo1", messages=messages_text, temperature=0.9, max_tokens=300,top_p=0.95)
