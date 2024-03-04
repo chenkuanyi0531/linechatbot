@@ -29,7 +29,7 @@ openai.api_type = 'azure'
 
 def GPT_response(text):
     # 接收回應
-    response = openai.Completion.create(model="gpt-4-turbo", prompt=text, temperature=0.7, max_tokens=800,top_p=0.95)
+    response = openai.Completion.create(engine="gpt-4-turbo", prompt=text, temperature=0.7, max_tokens=800,top_p=0.95)
     print(response)
     # 重組回應
     answer = response['choices'][0]['text'].replace('\n', '').replace(' .', '.').strip()
