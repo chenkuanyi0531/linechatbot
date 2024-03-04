@@ -36,7 +36,7 @@ def GPT_response(text):
          {"role": "system", "content": "你是一位智能小幫手，幫助人們查找資料，所有回復請說繁體中文，數學公式請直接寫純數字"},
          {"role": "user", "content": text},
     ]
-    response = openai.ChatCompletion.create(engine="gpt-4-turbo1", messages=messages_text, temperature=0.9, max_tokens=1000,top_p=0.95)
+    response = openai.ChatCompletion.create(engine="gpt-4-turbo1", messages=messages_text, temperature=0.9, max_tokens=300,top_p=0.95)
     return response['choices'][0]['message']['content']
 
 
